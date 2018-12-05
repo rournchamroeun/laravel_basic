@@ -1,57 +1,31 @@
 <?php
-
-
 namespace App\Http\Controllers;
 
-use App\Product;
+use App\Article;
 use Illuminate\Http\Request;
 
 class ArticlesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     function __construct()
     {
-        $this->middleware('permission:product-list');
-        $this->middleware('permission:product-create', ['only' => ['create','store']]);
-        $this->middleware('permission:product-edit', ['only' => ['edit','update']]);
-
-
-        $this->middleware('permission:product-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:article-list');
+        $this->middleware('permission:article-create', ['only' => ['create','store']]);
+        $this->middleware('permission:article-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:article-delete', ['only' => ['destroy']]);
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        $products = Product::latest()->paginate(5);
-        return view('products.index',compact('products'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+        $articles = Article::latest()->paginate(5);
+        return view('articles.index', compact('articles'));
+//        return view('articles.index', compact('articles'))->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        return view('products.create');
+        return view('articles.create');
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         request()->validate([
@@ -62,46 +36,24 @@ class ArticlesController extends Controller
         ]);
 
 
-        Product::create($request->all());
+        Article::create($request->all());
 
 
         return redirect()->route('products.index')
             ->with('success','Product created successfully.');
     }
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Product $product)
+    public function show(Article $article)
     {
-        return view('products.show',compact('product'));
+        return view('articles.show',compact('article'));
     }
 
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
+    public function edit(Article $product)
     {
-        return view('products.edit',compact('product'));
+        return view('articles.edit',compact('article'));
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Article $article)
     {
         request()->validate([
             'name' => 'required',
@@ -109,24 +61,16 @@ class ArticlesController extends Controller
         ]);
 
 
-        $product->update($request->all());
+        $article->update($request->all());
 
 
-        return redirect()->route('products.index')
-            ->with('success','Product updated successfully');
+        return redirect()->route('articles.index')
+            ->with('success','Article updated successfully');
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Product $product)
+    public function destroy(Article $article)
     {
-        $product->delete();
-
+        $article->delete();
 
         return redirect()->route('products.index')
             ->with('success','Product deleted successfully');
